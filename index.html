@@ -1,66 +1,165 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Injury Tracker</title>
+  <title>InjuryTrack</title>
   <style>
     body {
-      font-family: Arial;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #ffffff;
+      color: #1a1a1a;
       text-align: center;
-      padding: 40px;
-      background: #f9f9f9;
+    }
+
+    header {
+      padding: 120px 20px;
+      background: linear-gradient(to right, #b30000, #d4af37);
+      color: white;
     }
 
     h1 {
-      color: #b30000;
+      font-size: 50px;
+      margin-bottom: 10px;
+    }
+
+    .sub {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .name {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .btn {
+      display: inline-block;
+      margin: 10px;
+      padding: 12px 25px;
+      background: #b30000;
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    section {
+      padding: 80px 20px;
+    }
+
+    .grid {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      width: 220px;
+      padding: 20px;
+      border-radius: 12px;
+      background: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    footer {
+      background: #f5f5f5;
+      padding: 20px;
+      font-size: 14px;
+    }
+
+    .tracker {
+      background: #f9f9f9;
+      padding: 40px;
+      border-radius: 10px;
+      max-width: 500px;
+      margin: auto;
     }
 
     input, select {
       padding: 10px;
       margin: 10px;
-      width: 250px;
+      width: 80%;
       border-radius: 6px;
       border: 1px solid #ccc;
     }
 
-    button {
-      padding: 12px 25px;
-      background: #b30000;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
     .result {
-      margin-top: 30px;
-      padding: 20px;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      margin-top: 20px;
       text-align: left;
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
     }
   </style>
 </head>
 
 <body>
 
-<h1>Injury Tracker</h1>
+<header>
+  <h1>InjuryTrack</h1>
+  <p class="sub">Track Your Injury. Recover Smarter. Come Back Stronger.</p>
+  <p class="name">A platform by Sarah Mehra</p>
 
-<select id="injury">
-  <option value="">Select Injury Type</option>
-  <option value="ankle">Ankle Injury</option>
-  <option value="knee">Knee Injury</option>
-  <option value="shoulder">Shoulder Injury</option>
-</select><br>
+  <a href="#tracker" class="btn">Get Started</a>
+  <a href="#how" class="btn">View Demo</a>
+</header>
 
-<input id="pain" placeholder="Pain Level (1-10)"><br>
+<section id="how">
+  <h2>How It Works</h2>
+  <div class="grid">
+    <div class="card">Log your injury</div>
+    <div class="card">Track pain & symptoms</div>
+    <div class="card">Get recovery plan</div>
+    <div class="card">Return stronger</div>
+  </div>
+</section>
 
-<button onclick="generatePlan()">Get Recovery Plan</button>
+<section>
+  <h2>Features</h2>
+  <div class="grid">
+    <div class="card">Smart Injury Tracking</div>
+    <div class="card">Recovery Insights</div>
+    <div class="card">Risk Alerts</div>
+    <div class="card">Performance Impact</div>
+  </div>
+</section>
 
-<div id="output" class="result"></div>
+<section>
+  <h2>Your Recovery Plan Includes</h2>
+  <div class="grid">
+    <div class="card">Prevention</div>
+    <div class="card">Diet</div>
+    <div class="card">Rest</div>
+    <div class="card">Recovery</div>
+  </div>
+</section>
+
+<section id="tracker">
+  <h2>Injury Tracker</h2>
+
+  <div class="tracker">
+    <select id="injury">
+      <option value="">Select Injury Type</option>
+      <option value="ankle">Ankle Injury</option>
+      <option value="knee">Knee Injury</option>
+      <option value="shoulder">Shoulder Injury</option>
+    </select><br>
+
+    <input id="pain" placeholder="Pain Level (1-10)"><br>
+
+    <button class="btn" onclick="generatePlan()">Get Recovery Plan</button>
+
+    <div id="output" class="result"></div>
+  </div>
+</section>
+
+<section>
+  <h2>Take Control of Your Recovery</h2>
+  <p>Don’t let injuries control your performance.</p>
+  <a href="#tracker" class="btn">Start Now</a>
+</section>
+
+<footer>
+  Built by Sarah Mehra
+</footer>
 
 <script>
 function generatePlan() {
@@ -77,36 +176,34 @@ function generatePlan() {
   let rest = "";
   let recovery = "";
 
-  // INJURY-BASED LOGIC
   if (injury === "ankle") {
     prevention = "Avoid running and jumping. Use ankle support.";
-    recovery = "Follow RICE method (Rest, Ice, Compression, Elevation).";
+    recovery = "Use RICE method (Rest, Ice, Compression, Elevation).";
   }
 
   if (injury === "knee") {
     prevention = "Avoid deep squats and sudden movements.";
-    recovery = "Focus on strengthening surrounding muscles gradually.";
+    recovery = "Strengthen surrounding muscles gradually.";
   }
 
   if (injury === "shoulder") {
     prevention = "Avoid overhead lifting.";
-    recovery = "Do light mobility and resistance rehab.";
+    recovery = "Light mobility and resistance rehab.";
   }
 
-  // PAIN-BASED LOGIC
   if (pain >= 7) {
-    rest = "High pain: Complete rest is required.";
-    diet = "High protein + anti-inflammatory foods (turmeric, omega-3).";
+    rest = "High pain: Complete rest required.";
+    diet = "High protein + anti-inflammatory foods.";
   } else if (pain >= 4) {
-    rest = "Moderate pain: Limited movement, avoid strain.";
-    diet = "Balanced diet with protein and vitamins.";
+    rest = "Moderate pain: Limit movement.";
+    diet = "Balanced diet with protein.";
   } else {
     rest = "Low pain: Light activity allowed.";
     diet = "Maintain healthy diet.";
   }
 
   document.getElementById("output").innerHTML = `
-    <h2>Your Recovery Plan</h2>
+    <h3>Your Recovery Plan</h3>
     <b>Prevention:</b> ${prevention}<br><br>
     <b>Diet:</b> ${diet}<br><br>
     <b>Rest:</b> ${rest}<br><br>
