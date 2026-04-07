@@ -11,7 +11,6 @@
       background: #ffffff;
     }
 
-    /* NAVBAR */
     nav {
       background: #1a1a1a;
       padding: 15px;
@@ -30,7 +29,6 @@
       margin-right: 20px;
     }
 
-    /* HERO */
     header {
       padding: 120px 20px;
       background: linear-gradient(to right, #b30000, #d4af37);
@@ -38,8 +36,7 @@
     }
 
     h1 {
-      font-size: 48px;
-      margin-bottom: 10px;
+      font-size: 50px;
     }
 
     p {
@@ -54,6 +51,12 @@
       border-radius: 8px;
       text-decoration: none;
       display: inline-block;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background: #800000;
+      transform: scale(1.05);
     }
 
     section {
@@ -62,45 +65,43 @@
 
     .card {
       display: inline-block;
-      width: 200px;
-      margin: 10px;
+      width: 220px;
+      margin: 15px;
       padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-
   </style>
 </head>
 
 <body>
 
-<!-- NAVBAR -->
 <nav>
   <span class="logo">InjuryTrack | Sarah Mehra</span>
   <a href="index.html">Home</a>
   <a href="tracker.html">Tracker</a>
 </nav>
 
-<!-- HERO -->
 <header>
-  <h1>Track Your Injury. Recover Smarter.</h1>
-  <p>A platform by Sarah Mehra</p>
+  <h1>Recover Smarter, Not Harder</h1>
+  <p>Track injuries, monitor recovery, and return stronger with data-driven insights.</p>
 
-  <!-- WORKING BUTTONS -->
   <a href="tracker.html" class="btn">Get Started</a>
   <a href="tracker.html" class="btn">View Demo</a>
+
+  <p style="margin-top:20px; font-size:14px; opacity:0.8;">
+    No signup needed • Instant insights • Built for athletes
+  </p>
 </header>
 
-<!-- FEATURES -->
 <section>
   <h2>What You Can Do</h2>
 
   <div class="card">Log Injuries</div>
-  <div class="card">Track Pain</div>
-  <div class="card">Get Recovery Plan</div>
+  <div class="card">Track Pain Levels</div>
+  <div class="card">Get Recovery Plans</div>
 </section>
 
-<!-- HOW IT WORKS -->
 <section>
   <h2>How It Works</h2>
   <p>Log → Analyze → Recover → Improve</p>
