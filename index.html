@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Injury Tracker</title>
+  <title>Injury Tracker Pro</title>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -13,9 +13,7 @@
       background: #f9f9f9;
     }
 
-    h1 {
-      color: #b30000;
-    }
+    h1 { color: #b30000; }
 
     input, select {
       padding: 10px;
@@ -33,7 +31,7 @@
       cursor: pointer;
     }
 
-    .result {
+    .box {
       margin-top: 20px;
       text-align: left;
       max-width: 500px;
@@ -42,6 +40,11 @@
       padding: 20px;
       border-radius: 10px;
     }
+
+    canvas {
+      margin-top: 30px;
+      max-width: 600px;
+    }
   </style>
 </head>
 
@@ -49,6 +52,9 @@
 
 <h1>Injury Tracker</h1>
 <p><b>A platform by Sarah Mehra</b></p>
+
+<input id="name" placeholder="Your Name"><br>
+<input id="sport" placeholder="Your Sport"><br>
 
 <select id="injury">
   <option value="">Select Injury</option>
@@ -59,36 +65,45 @@
 
 <input id="pain" placeholder="Pain level (1-10)"><br>
 
-<button onclick="generatePlan()">Get Plan</button>
-<button onclick="clearData()">Clear</button>
+<button onclick="generatePlan()">Save & Analyze</button>
+<button onclick="clearData()">Clear All</button>
 <button onclick="goHome()">Back Home</button>
 
-<div id="output" class="result"></div>
+<div id="output" class="box"></div>
+<div id="analysis" class="box"></div>
+<div id="history" class="box"></div>
 
 <canvas id="painChart"></canvas>
 
 <script>
-let painData = [];
-let labels = [];
 let chart;
 
+// LOAD SAVED DATA
+let storedData = JSON.parse(localStorage.getItem("injuryData")) || [];
+
 function generatePlan() {
+  let name = document.getElementById("name").value;
+  let sport = document.getElementById("sport").value;
   let injury = document.getElementById("injury").value;
-  let pain = document.getElementById("pain").value;
+  let pain = parseInt(document.getElementById("pain").value);
 
   if (!injury || !pain) {
-    document.getElementById("output").innerHTML = "Please fill all fields.";
+    output.innerHTML = "Please fill all required fields.";
     return;
   }
 
-  pain = parseInt(pain);
+  let date = new Date().toLocaleDateString();
 
-  painData.push(pain);
-  labels.push("Entry " + painData.length);
+  let entry = { date, pain };
+  storedData.push(entry);
+
+  localStorage.setItem("injuryData", JSON.stringify(storedData));
 
   updateChart();
+  showHistory();
+  showAnalysis();
 
-  let prevention="", diet="", rest="", recovery="";
+  let prevention="", diet="", rest="", recovery="", warning="";
 
   if(injury==="ankle"){
     prevention="Avoid running.";
@@ -106,8 +121,9 @@ function generatePlan() {
   if(pain>=7){
     rest="Complete rest.";
     diet="High protein + anti-inflammatory.";
+    warning="⚠️ Consider consulting a professional.";
   } else if(pain>=4){
-    rest="Limited movement.";
+    rest="Limit movement.";
     diet="Balanced diet.";
   } else {
     rest="Light activity.";
@@ -115,46 +131,85 @@ function generatePlan() {
   }
 
   document.getElementById("output").innerHTML = `
-    <h3>Your Recovery Plan</h3>
+    <h3>Recovery Plan for ${name || "User"} (${sport || "General"})</h3>
     <b>Prevention:</b> ${prevention}<br><br>
     <b>Diet:</b> ${diet}<br><br>
     <b>Rest:</b> ${rest}<br><br>
-    <b>Recovery:</b> ${recovery}
+    <b>Recovery:</b> ${recovery}<br><br>
+    <b>${warning}</b>
   `;
 }
 
 function updateChart() {
   let ctx = document.getElementById("painChart").getContext("2d");
 
-  if (chart) chart.destroy();
+  let labels = storedData.map(d => d.date);
+  let data = storedData.map(d => d.pain);
+
+  if(chart) chart.destroy();
 
   chart = new Chart(ctx, {
-    type: 'line',
+    type: "line",
     data: {
       labels: labels,
       datasets: [{
-        label: 'Pain Level Over Time',
-        data: painData,
-        fill: false
+        label: "Pain Level",
+        data: data,
+        borderWidth: 2
       }]
     }
   });
 }
 
+function showHistory() {
+  let html = "<h3>History</h3>";
+
+  storedData.forEach(d => {
+    html += `${d.date} - Pain: ${d.pain}<br>`;
+  });
+
+  document.getElementById("history").innerHTML = html;
+}
+
+function showAnalysis() {
+  if(storedData.length < 2) return;
+
+  let last = storedData[storedData.length - 1].pain;
+  let prev = storedData[storedData.length - 2].pain;
+
+  let message = "";
+  let score = 100 - last * 10;
+
+  if(last < prev) message = "✅ You are recovering well.";
+  else if(last === prev) message = "⚠️ Recovery is slow.";
+  else message = "🚨 Pain increasing. Be careful.";
+
+  document.getElementById("analysis").innerHTML = `
+    <h3>Recovery Analysis</h3>
+    ${message}<br><br>
+    Recovery Score: ${score}%
+  `;
+}
+
 function clearData() {
-  document.getElementById("injury").value="";
-  document.getElementById("pain").value="";
-  document.getElementById("output").innerHTML="";
+  localStorage.removeItem("injuryData");
+  storedData = [];
 
-  painData = [];
-  labels = [];
+  document.getElementById("output").innerHTML = "";
+  document.getElementById("analysis").innerHTML = "";
+  document.getElementById("history").innerHTML = "";
 
-  if (chart) chart.destroy();
+  if(chart) chart.destroy();
 }
 
 function goHome() {
   window.location.href = "index.html";
 }
+
+// LOAD ON START
+updateChart();
+showHistory();
+showAnalysis();
 </script>
 
 </body>
