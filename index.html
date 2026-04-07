@@ -1,216 +1,110 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Injury Tracker Pro</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>InjuryTrack</title>
 
   <style>
     body {
-      font-family: Arial;
+      margin: 0;
+      font-family: Arial, sans-serif;
       text-align: center;
-      padding: 30px;
-      background: #f9f9f9;
+      background: #ffffff;
     }
 
-    h1 { color: #b30000; }
-
-    input, select {
-      padding: 10px;
-      margin: 10px;
-      width: 250px;
+    /* NAVBAR */
+    nav {
+      background: #1a1a1a;
+      padding: 15px;
     }
 
-    button {
-      padding: 10px 20px;
+    nav a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .logo {
+      color: white;
+      font-weight: bold;
+      margin-right: 20px;
+    }
+
+    /* HERO */
+    header {
+      padding: 120px 20px;
+      background: linear-gradient(to right, #b30000, #d4af37);
+      color: white;
+    }
+
+    h1 {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 18px;
+    }
+
+    .btn {
+      padding: 12px 25px;
       margin: 10px;
       background: #b30000;
       color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
+      border-radius: 8px;
+      text-decoration: none;
+      display: inline-block;
     }
 
-    .box {
-      margin-top: 20px;
-      text-align: left;
-      max-width: 500px;
-      margin: auto;
-      background: white;
+    section {
+      padding: 60px 20px;
+    }
+
+    .card {
+      display: inline-block;
+      width: 200px;
+      margin: 10px;
       padding: 20px;
       border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
-    canvas {
-      margin-top: 30px;
-      max-width: 600px;
-    }
   </style>
 </head>
 
 <body>
 
-<h1>Injury Tracker</h1>
-<p><b>A platform by Sarah Mehra</b></p>
+<!-- NAVBAR -->
+<nav>
+  <span class="logo">InjuryTrack | Sarah Mehra</span>
+  <a href="index.html">Home</a>
+  <a href="tracker.html">Tracker</a>
+</nav>
 
-<input id="name" placeholder="Your Name"><br>
-<input id="sport" placeholder="Your Sport"><br>
+<!-- HERO -->
+<header>
+  <h1>Track Your Injury. Recover Smarter.</h1>
+  <p>A platform by Sarah Mehra</p>
 
-<select id="injury">
-  <option value="">Select Injury</option>
-  <option value="ankle">Ankle</option>
-  <option value="knee">Knee</option>
-  <option value="shoulder">Shoulder</option>
-</select><br>
+  <!-- WORKING BUTTONS -->
+  <a href="tracker.html" class="btn">Get Started</a>
+  <a href="tracker.html" class="btn">View Demo</a>
+</header>
 
-<input id="pain" placeholder="Pain level (1-10)"><br>
+<!-- FEATURES -->
+<section>
+  <h2>What You Can Do</h2>
 
-<button onclick="generatePlan()">Save & Analyze</button>
-<button onclick="clearData()">Clear All</button>
-<button onclick="goHome()">Back Home</button>
+  <div class="card">Log Injuries</div>
+  <div class="card">Track Pain</div>
+  <div class="card">Get Recovery Plan</div>
+</section>
 
-<div id="output" class="box"></div>
-<div id="analysis" class="box"></div>
-<div id="history" class="box"></div>
-
-<canvas id="painChart"></canvas>
-
-<script>
-let chart;
-
-// LOAD SAVED DATA
-let storedData = JSON.parse(localStorage.getItem("injuryData")) || [];
-
-function generatePlan() {
-  let name = document.getElementById("name").value;
-  let sport = document.getElementById("sport").value;
-  let injury = document.getElementById("injury").value;
-  let pain = parseInt(document.getElementById("pain").value);
-
-  if (!injury || !pain) {
-    output.innerHTML = "Please fill all required fields.";
-    return;
-  }
-
-  let date = new Date().toLocaleDateString();
-
-  let entry = { date, pain };
-  storedData.push(entry);
-
-  localStorage.setItem("injuryData", JSON.stringify(storedData));
-
-  updateChart();
-  showHistory();
-  showAnalysis();
-
-  let prevention="", diet="", rest="", recovery="", warning="";
-
-  if(injury==="ankle"){
-    prevention="Avoid running.";
-    recovery="Use RICE method.";
-  }
-  if(injury==="knee"){
-    prevention="Avoid squats.";
-    recovery="Strengthen muscles.";
-  }
-  if(injury==="shoulder"){
-    prevention="Avoid overhead lifts.";
-    recovery="Mobility exercises.";
-  }
-
-  if(pain>=7){
-    rest="Complete rest.";
-    diet="High protein + anti-inflammatory.";
-    warning="⚠️ Consider consulting a professional.";
-  } else if(pain>=4){
-    rest="Limit movement.";
-    diet="Balanced diet.";
-  } else {
-    rest="Light activity.";
-    diet="Maintain diet.";
-  }
-
-  document.getElementById("output").innerHTML = `
-    <h3>Recovery Plan for ${name || "User"} (${sport || "General"})</h3>
-    <b>Prevention:</b> ${prevention}<br><br>
-    <b>Diet:</b> ${diet}<br><br>
-    <b>Rest:</b> ${rest}<br><br>
-    <b>Recovery:</b> ${recovery}<br><br>
-    <b>${warning}</b>
-  `;
-}
-
-function updateChart() {
-  let ctx = document.getElementById("painChart").getContext("2d");
-
-  let labels = storedData.map(d => d.date);
-  let data = storedData.map(d => d.pain);
-
-  if(chart) chart.destroy();
-
-  chart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: labels,
-      datasets: [{
-        label: "Pain Level",
-        data: data,
-        borderWidth: 2
-      }]
-    }
-  });
-}
-
-function showHistory() {
-  let html = "<h3>History</h3>";
-
-  storedData.forEach(d => {
-    html += `${d.date} - Pain: ${d.pain}<br>`;
-  });
-
-  document.getElementById("history").innerHTML = html;
-}
-
-function showAnalysis() {
-  if(storedData.length < 2) return;
-
-  let last = storedData[storedData.length - 1].pain;
-  let prev = storedData[storedData.length - 2].pain;
-
-  let message = "";
-  let score = 100 - last * 10;
-
-  if(last < prev) message = "✅ You are recovering well.";
-  else if(last === prev) message = "⚠️ Recovery is slow.";
-  else message = "🚨 Pain increasing. Be careful.";
-
-  document.getElementById("analysis").innerHTML = `
-    <h3>Recovery Analysis</h3>
-    ${message}<br><br>
-    Recovery Score: ${score}%
-  `;
-}
-
-function clearData() {
-  localStorage.removeItem("injuryData");
-  storedData = [];
-
-  document.getElementById("output").innerHTML = "";
-  document.getElementById("analysis").innerHTML = "";
-  document.getElementById("history").innerHTML = "";
-
-  if(chart) chart.destroy();
-}
-
-function goHome() {
-  window.location.href = "index.html";
-}
-
-// LOAD ON START
-updateChart();
-showHistory();
-showAnalysis();
-</script>
+<!-- HOW IT WORKS -->
+<section>
+  <h2>How It Works</h2>
+  <p>Log → Analyze → Recover → Improve</p>
+</section>
 
 </body>
 </html>
