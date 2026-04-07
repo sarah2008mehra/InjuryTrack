@@ -31,6 +31,10 @@
       cursor: pointer;
     }
 
+    button:hover {
+      background: #800000;
+    }
+
     .box {
       margin-top: 20px;
       text-align: left;
@@ -52,6 +56,8 @@
 
 <h1>Injury Tracker</h1>
 <p><b>A platform by Sarah Mehra</b></p>
+
+<h3 id="welcome"></h3>
 
 <input id="name" placeholder="Your Name"><br>
 <input id="sport" placeholder="Your Sport"><br>
@@ -77,8 +83,6 @@
 
 <script>
 let chart;
-
-// LOAD SAVED DATA
 let storedData = JSON.parse(localStorage.getItem("injuryData")) || [];
 
 function generatePlan() {
@@ -88,15 +92,16 @@ function generatePlan() {
   let pain = parseInt(document.getElementById("pain").value);
 
   if (!injury || !pain) {
-    output.innerHTML = "Please fill all required fields.";
+    document.getElementById("output").innerHTML = "Please fill all fields.";
     return;
   }
 
+  document.getElementById("welcome").innerText =
+    "Welcome " + (name || "Athlete") + " 👋";
+
   let date = new Date().toLocaleDateString();
 
-  let entry = { date, pain };
-  storedData.push(entry);
-
+  storedData.push({ date, pain });
   localStorage.setItem("injuryData", JSON.stringify(storedData));
 
   updateChart();
@@ -119,24 +124,24 @@ function generatePlan() {
   }
 
   if(pain>=7){
-    rest="Complete rest.";
+    rest="Complete rest required.";
     diet="High protein + anti-inflammatory.";
-    warning="⚠️ Consider consulting a professional.";
+    warning="⚠️ High pain detected – consider professional advice.";
   } else if(pain>=4){
     rest="Limit movement.";
     diet="Balanced diet.";
   } else {
-    rest="Light activity.";
-    diet="Maintain diet.";
+    rest="Light activity allowed.";
+    diet="Maintain healthy diet.";
   }
 
   document.getElementById("output").innerHTML = `
-    <h3>Recovery Plan for ${name || "User"} (${sport || "General"})</h3>
+    <h3>Recovery Plan</h3>
     <b>Prevention:</b> ${prevention}<br><br>
     <b>Diet:</b> ${diet}<br><br>
     <b>Rest:</b> ${rest}<br><br>
     <b>Recovery:</b> ${recovery}<br><br>
-    <b>${warning}</b>
+    <b style="color:red;">${warning}</b>
   `;
 }
 
@@ -157,6 +162,18 @@ function updateChart() {
         data: data,
         borderWidth: 2
       }]
+    },
+    options: {
+      scales: {
+        y: {
+          min: 0,
+          max: 10,
+          title: {
+            display: true,
+            text: "Pain Level"
+          }
+        }
+      }
     }
   });
 }
@@ -178,15 +195,26 @@ function showAnalysis() {
   let prev = storedData[storedData.length - 2].pain;
 
   let message = "";
+  let trend = "";
   let score = 100 - last * 10;
 
-  if(last < prev) message = "✅ You are recovering well.";
-  else if(last === prev) message = "⚠️ Recovery is slow.";
-  else message = "🚨 Pain increasing. Be careful.";
+  if(last < prev) {
+    message = "✅ You are recovering well.";
+    trend = "Trend: Improving 📉";
+  }
+  else if(last > prev) {
+    message = "🚨 Pain increasing. Be careful.";
+    trend = "Trend: Worsening 📈";
+  }
+  else {
+    message = "⚠️ Recovery is slow.";
+    trend = "Trend: Stable";
+  }
 
   document.getElementById("analysis").innerHTML = `
     <h3>Recovery Analysis</h3>
     ${message}<br><br>
+    ${trend}<br><br>
     Recovery Score: ${score}%
   `;
 }
@@ -206,6 +234,13 @@ function goHome() {
   window.location.href = "index.html";
 }
 
+updateChart();
+showHistory();
+showAnalysis();
+</script>
+
+</body>
+</html>
 // LOAD ON START
 updateChart();
 showHistory();
